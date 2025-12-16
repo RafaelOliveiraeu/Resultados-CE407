@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Escola SESI 407 - Avaliação da Unidade 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --sesi-red: #E42313;
+            --sesi-dark: #1a1a1a;
+            --sesi-light: #f5f5f5;
+            --sesi-gray: #4a4a4a;
+            --accent-yellow: #FFD700;
+            --accent-green: #00D084;
+            --accent-blue: #2196F3;
+            --accent-purple: #9C27B0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: var(--sesi-red);
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(228, 35, 19, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .header-content {
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.95;
+        }
+
+        .logo-container {
+            z-index: 1;
+            background: rgba(255, 255, 255, 0);
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            height: 70px;
+            width: auto;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 3rem 4rem;
+        }
+
+        .filters {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            animation: slideInDown 0.6s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent-yellow);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Barlow', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group select:hover {
+            border-color: var(--sesi-red);
+            background: rgba(228, 35, 19, 0.1);
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--sesi-red);
+            box-shadow: 0 0 0 3px rgba(228, 35, 19, 0.2);
+        }
+
+        .filter-group select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(228, 35, 19, 0.9) 0%, rgba(200, 20, 10, 0.9) 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(228, 35, 19, 0.3);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(228, 35, 19, 0.5);
+        }
+
+        .stat-card:hover::before {
+            transform: scale(1.5);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-value {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .charts-grid .chart-container:nth-child(1) { animation-delay: 0.5s; }
+        .charts-grid .chart-container:nth-child(2) { animation-delay: 0.6s; }
+        .charts-grid .chart-container:nth-child(3) { animation-delay: 0.7s; }
+
+        .chart-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-yellow);
+            letter-spacing: 2px;
+        }
+
+        .full-width-chart {
+            grid-column: 1 / -1;
+            animation-delay: 0.8s;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            overflow-x: auto;
+            animation: fadeInUp 0.8s ease-out backwards 0.9s;
+            margin-bottom: 2rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+        }
+
+        .data-table thead th {
+            background: var(--sesi-red);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .data-table thead th:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .data-table thead th:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .data-table tbody tr {
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(228, 35, 19, 0.2);
+            transform: scale(1.01);
+        }
+
+        .data-table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-table tbody tr td:first-child {
+            border-radius: 10px 0 0 10px;
+            font-weight: 600;
+        }
+
+        .data-table tbody tr td:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .percentage-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .percentage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green) 0%, var(--accent-yellow) 100%);
+            border-radius: 10px;
+            transition: width 1s ease-out;
+        }
+
+        .nivel-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nivel-fundamental {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .nivel-medio {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1.5rem 2rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 2rem 1.5rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>Avaliação da Unidade de 2025 - Escola SESI 407</h1>
+            <h2>Análise da Participação dos Pais ao Longo das Etapas</h2>
+        </div>
+        <div class="logo-container">
+            <img src="sesi-logo.png" alt="Logo SESI" class="logo" id="logoImg">
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="filters">
+            <div class="filter-group">
+                <label for="filterNivel">Filtrar por Nível de Ensino</label>
+                <select id="filterNivel">
+                    <option value="all">Todos os Níveis</option>
+                    <option value="Ensino Fundamental">Ensino Fundamental</option>
+                    <option value="Ensino Médio">Ensino Médio</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterTurma">Filtrar por Turma</label>
+                <select id="filterTurma">
+                    <option value="all">Todas as Turmas</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterData">Filtrar por Data de Reunião</label>
+                <select id="filterData">
+                    <option value="all">Todas as Reuniões</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="totalAlunos">837</div>
+                <div class="stat-label">Total de Alunos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="totalPresencas">374</div>
+                <div class="stat-label">Presenças Confirmadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">❌</div>
+                <div class="stat-value" id="totalAusencias">463</div>
+                <div class="stat-label">Ausências</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="percentualPresenca">44.7%</div>
+                <div class="stat-label">Taxa de Presença</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container full-width-chart">
+                <h3 class="chart-title">📈 Evolução da Participação ao Longo do Ano</h3>
+                <canvas id="evolucaoChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">🎓 Participação por Nível de Ensino</h3>
+                <canvas id="nivelChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">📅 Participação por Reunião</h3>
+                <canvas id="dataChart"></canvas>
+            </div>
+
+            <div class="chart-container full-width-chart">
+                <h3 class="chart-title">🏆 Ranking de Participação por Turma (%)</h3>
+                <canvas id="turmaChart"></canvas>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h3 class="chart-title">📋 Detalhamento Completo por Turma</h3>
+            <table class="data-table" id="turmaTable">
+                <thead>
+                    <tr>
+                        <th>Turma</th>
+                        <th>Nível</th>
+                        <th>Total de Alunos</th>
+                        <th>Presenças</th>
+                        <th>Ausências</th>
+                        <th>Percentual</th>
+                        <th>Visualização</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container">
+            <h3 class="chart-title">📆 Análise por Data de Reunião</h3>
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Data da Reunião</th>
+                        <th>Mês</th>
+                        <th>Total de Alunos</th>
+                        <th>Presenças</th>
+                        <th>Ausências</th>
+                        <th>Percentual</th>
+                        <th>Visualização</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>SESI - Serviço Social da Indústria | CE 407 | © 2025</p>
+    </footer>
+
+    <script>
+        // Dados completos processados
+        const dadosCompletos = {
+            "geral": {
+                "total_alunos": 837,
+                "total_presencas": 374,
+                "total_ausencias": 463
+            },
+            "por_data": [
+                {"data": "24/01/2025", "mes": "Janeiro", "total": 163, "presencas": 73, "ausencias": 90, "percentual": 44.79},
+                {"data": "21/05/2025", "mes": "Maio", "total": 127, "presencas": 57, "ausencias": 70, "percentual": 44.88},
+                {"data": "12/08/2025", "mes": "Agosto", "total": 190, "presencas": 58, "ausencias": 132, "percentual": 30.53},
+                {"data": "03/10/2025", "mes": "Outubro", "total": 325, "presencas": 163, "ausencias": 162, "percentual": 50.15},
+                {"data": "06/10/2025", "mes": "Outubro", "total": 32, "presencas": 23, "ausencias": 9, "percentual": 71.88}
+            ],
+            "por_nivel": [
+                {"nivel": "Ensino Fundamental", "total": 480, "presencas": 195, "ausencias": 285, "percentual": 40.62},
+                {"nivel": "Ensino Médio", "total": 357, "presencas": 179, "ausencias": 178, "percentual": 50.14}
+            ],
+            "por_turma": [
+                {"turma": "1ª Série EM A", "nivel": "Ensino Médio", "total": 99, "presencas": 47, "ausencias": 52, "percentual": 47.47},
+                {"turma": "1ª Série EM B", "nivel": "Ensino Médio", "total": 96, "presencas": 39, "ausencias": 57, "percentual": 40.62},
+                {"turma": "1ª Série EM C", "nivel": "Ensino Médio", "total": 95, "presencas": 51, "ausencias": 44, "percentual": 53.68},
+                {"turma": "2ª Série EM A", "nivel": "Ensino Médio", "total": 32, "presencas": 13, "ausencias": 19, "percentual": 40.62},
+                {"turma": "2ª Série EM B", "nivel": "Ensino Médio", "total": 32, "presencas": 13, "ausencias": 19, "percentual": 40.62},
+                {"turma": "2ª Série EM C", "nivel": "Ensino Médio", "total": 32, "presencas": 12, "ausencias": 20, "percentual": 37.50},
+                {"turma": "3ª Série EM A", "nivel": "Ensino Médio", "total": 32, "presencas": 8, "ausencias": 24, "percentual": 25.00},
+                {"turma": "3ª Série EM B", "nivel": "Ensino Médio", "total": 32, "presencas": 11, "ausencias": 21, "percentual": 34.38},
+                {"turma": "3ª Série EM C", "nivel": "Ensino Médio", "total": 30, "presencas": 1, "ausencias": 29, "percentual": 3.33},
+                {"turma": "6º Ano A", "nivel": "Ensino Fundamental", "total": 64, "presencas": 40, "ausencias": 24, "percentual": 62.50},
+                {"turma": "6º Ano B", "nivel": "Ensino Fundamental", "total": 66, "presencas": 30, "ausencias": 36, "percentual": 45.45},
+                {"turma": "6º Ano C", "nivel": "Ensino Fundamental", "total": 64, "presencas": 32, "ausencias": 32, "percentual": 50.00},
+                {"turma": "7º Ano A", "nivel": "Ensino Fundamental", "total": 33, "presencas": 12, "ausencias": 21, "percentual": 36.36},
+                {"turma": "8º Ano A", "nivel": "Ensino Fundamental", "total": 32, "presencas": 16, "ausencias": 16, "percentual": 50.00},
+                {"turma": "8º Ano B", "nivel": "Ensino Fundamental", "total": 34, "presencas": 22, "ausencias": 12, "percentual": 64.71},
+                {"turma": "9º Ano A", "nivel": "Ensino Fundamental", "total": 32, "presencas": 12, "ausencias": 20, "percentual": 37.50},
+                {"turma": "9º Ano B", "nivel": "Ensino Fundamental", "total": 32, "presencas": 15, "ausencias": 17, "percentual": 46.88}
+            ],
+            "evolucao_temporal": [
+                {"data": "24/01/2025", "mes": "Janeiro", "nivel": "Ensino Fundamental", "total": 97, "presencas": 50, "percentual": 51.55},
+                {"data": "24/01/2025", "mes": "Janeiro", "nivel": "Ensino Médio", "total": 66, "presencas": 23, "percentual": 34.85},
+                {"data": "21/05/2025", "mes": "Maio", "total": 95, "presencas": 57, "nivel": "Ensino Médio", "percentual": 60.00},
+                {"data": "21/05/2025", "mes": "Maio", "total": 32, "presencas": 0, "nivel": "Ensino Fundamental", "percentual": 0},
+                {"data": "12/08/2025", "mes": "Agosto", "total": 190, "presencas": 58, "nivel": "Ensino Médio", "percentual": 30.53},
+                {"data": "03/10/2025", "mes": "Outubro", "total": 261, "presencas": 117, "nivel": "Ensino Fundamental", "percentual": 44.83},
+                {"data": "03/10/2025", "mes": "Outubro", "total": 64, "presencas": 46, "nivel": "Ensino Médio", "percentual": 71.88},
+                {"data": "06/10/2025", "mes": "Outubro", "total": 32, "presencas": 23, "nivel": "Ensino Médio", "percentual": 71.88}
+            ]
+        };
+
+        // Carregar logo
+        fetch('/mnt/user-data/uploads/sesi-logo.png')
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                document.getElementById('logoImg').src = url;
+            })
+            .catch(() => console.log('Logo não carregada'));
+
+        // Populando filtros
+        const filterTurma = document.getElementById('filterTurma');
+        const turmasOrdenadas = [...dadosCompletos.por_turma].sort((a, b) => a.turma.localeCompare(b.turma));
+        turmasOrdenadas.forEach(turma => {
+            const option = document.createElement('option');
+            option.value = turma.turma;
+            option.textContent = turma.turma;
+            filterTurma.appendChild(option);
+        });
+
+        const filterData = document.getElementById('filterData');
+        dadosCompletos.por_data.forEach(reuniao => {
+            const option = document.createElement('option');
+            option.value = reuniao.data;
+            option.textContent = `${reuniao.data} - ${reuniao.mes}`;
+            filterData.appendChild(option);
+        });
+
+        // Variáveis para os gráficos
+        let evolucaoChart, nivelChart, dataChart, turmaChart;
+
+        // Função para atualizar gráficos
+        function atualizarGraficos(dadosFiltrados) {
+            // Atualizar cards de estatísticas
+            const totalAlunos = dadosFiltrados.geral.total_alunos;
+            const totalPresencas = dadosFiltrados.geral.total_presencas;
+            const totalAusencias = dadosFiltrados.geral.total_ausencias;
+            const percentual = ((totalPresencas / totalAlunos) * 100).toFixed(1);
+
+            document.getElementById('totalAlunos').textContent = totalAlunos;
+            document.getElementById('totalPresencas').textContent = totalPresencas;
+            document.getElementById('totalAusencias').textContent = totalAusencias;
+            document.getElementById('percentualPresenca').textContent = percentual + '%';
+
+            // 1. Gráfico de Evolução Temporal
+            const ctxEvolucao = document.getElementById('evolucaoChart').getContext('2d');
+            if (evolucaoChart) evolucaoChart.destroy();
+
+            // Preparar dados de evolução
+            const datasUnicas = [...new Set(dadosFiltrados.evolucao_temporal.map(e => e.data))].sort((a, b) => {
+                const [dA, mA, yA] = a.split('/');
+                const [dB, mB, yB] = b.split('/');
+                return new Date(yA, mA-1, dA) - new Date(yB, mB-1, dB);
+            });
+
+            const dadosEF = [];
+            const dadosEM = [];
+
+            datasUnicas.forEach(data => {
+                const ef = dadosFiltrados.evolucao_temporal.find(e => e.data === data && e.nivel === 'Ensino Fundamental');
+                const em = dadosFiltrados.evolucao_temporal.find(e => e.data === data && e.nivel === 'Ensino Médio');
+                dadosEF.push(ef ? ef.percentual : 0);
+                dadosEM.push(em ? em.percentual : 0);
+            });
+
+            evolucaoChart = new Chart(ctxEvolucao, {
+                type: 'line',
+                data: {
+                    labels: datasUnicas,
+                    datasets: [{
+                        label: 'Ensino Fundamental',
+                        data: dadosEF,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }, {
+                        label: 'Ensino Médio',
+                        data: dadosEM,
+                        borderColor: '#9C27B0',
+                        backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'white', font: { size: 12, weight: 'bold' } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'white' },
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white',
+                                font: { size: 14, weight: 'bold' },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Gráfico de Nível de Ensino
+            const ctxNivel = document.getElementById('nivelChart').getContext('2d');
+            if (nivelChart) nivelChart.destroy();
+
+            nivelChart = new Chart(ctxNivel, {
+                type: 'doughnut',
+                data: {
+                    labels: dadosFiltrados.por_nivel.map(n => `${n.nivel} - ${n.percentual.toFixed(1)}%`),
+                    datasets: [{
+                        data: dadosFiltrados.por_nivel.map(n => n.presencas),
+                        backgroundColor: ['#2196F3', '#9C27B0'],
+                        borderWidth: 4,
+                        borderColor: '#1a1a1a'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: { size: 14, weight: 'bold' },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 3. Gráfico por Data de Reunião
+            const ctxData = document.getElementById('dataChart').getContext('2d');
+            if (dataChart) dataChart.destroy();
+
+            dataChart = new Chart(ctxData, {
+                type: 'bar',
+                data: {
+                    labels: dadosFiltrados.por_data.map(d => `${d.data.substring(0, 5)}`),
+                    datasets: [{
+                        label: 'Presenças',
+                        data: dadosFiltrados.por_data.map(d => d.presencas),
+                        backgroundColor: '#00D084',
+                        borderRadius: 10
+                    }, {
+                        label: 'Ausências',
+                        data: dadosFiltrados.por_data.map(d => d.ausencias),
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: { color: 'white', font: { size: 12, weight: 'bold' } }
+                        },
+                        y: {
+                            stacked: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'white' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white',
+                                font: { size: 14, weight: 'bold' },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 4. Gráfico de Ranking por Turma
+            const turmasOrdenadas = [...dadosFiltrados.por_turma].sort((a, b) => b.percentual - a.percentual);
+
+            const ctxTurma = document.getElementById('turmaChart').getContext('2d');
+            if (turmaChart) turmaChart.destroy();
+
+            turmaChart = new Chart(ctxTurma, {
+                type: 'bar',
+                data: {
+                    labels: turmasOrdenadas.map(t => t.turma),
+                    datasets: [{
+                        label: 'Percentual de Presença',
+                        data: turmasOrdenadas.map(t => t.percentual),
+                        backgroundColor: turmasOrdenadas.map(t => {
+                            if (t.percentual >= 60) return '#00D084';
+                            if (t.percentual >= 45) return '#FFD700';
+                            return '#E42313';
+                        }),
+                        borderWidth: 0,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'white' },
+                            max: 100
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: 'white', font: { size: 11, weight: 'bold' } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Atualizar tabela de turmas
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            turmasOrdenadas.forEach(turma => {
+                const row = document.createElement('tr');
+                const nivelClass = turma.nivel === 'Ensino Fundamental' ? 'nivel-fundamental' : 'nivel-medio';
+                row.innerHTML = `
+                    <td><strong>${turma.turma}</strong></td>
+                    <td><span class="nivel-badge ${nivelClass}">${turma.nivel}</span></td>
+                    <td>${turma.total}</td>
+                    <td>${turma.presencas}</td>
+                    <td>${turma.ausencias}</td>
+                    <td><strong>${turma.percentual.toFixed(2)}%</strong></td>
+                    <td>
+                        <div class="percentage-bar">
+                            <div class="percentage-fill" style="width: ${turma.percentual}%"></div>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Atualizar tabela de datas
+            const dataTableBody = document.getElementById('dataTableBody');
+            dataTableBody.innerHTML = '';
+            dadosFiltrados.por_data.forEach(reuniao => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${reuniao.data}</strong></td>
+                    <td>${reuniao.mes}</td>
+                    <td>${reuniao.total}</td>
+                    <td>${reuniao.presencas}</td>
+                    <td>${reuniao.ausencias}</td>
+                    <td><strong>${reuniao.percentual.toFixed(2)}%</strong></td>
+                    <td>
+                        <div class="percentage-bar">
+                            <div class="percentage-fill" style="width: ${reuniao.percentual}%"></div>
+                        </div>
+                    </td>
+                `;
+                dataTableBody.appendChild(row);
+            });
+        }
+
+        // Função de filtro
+        function aplicarFiltros() {
+            const nivelFiltro = document.getElementById('filterNivel').value;
+            const turmaFiltro = document.getElementById('filterTurma').value;
+            const dataFiltro = document.getElementById('filterData').value;
+
+            let dadosFiltrados = JSON.parse(JSON.stringify(dadosCompletos));
+
+            // Aplicar filtros
+            if (nivelFiltro !== 'all') {
+                dadosFiltrados.por_turma = dadosFiltrados.por_turma.filter(t => t.nivel === nivelFiltro);
+                dadosFiltrados.por_nivel = dadosFiltrados.por_nivel.filter(n => n.nivel === nivelFiltro);
+                dadosFiltrados.evolucao_temporal = dadosFiltrados.evolucao_temporal.filter(e => e.nivel === nivelFiltro);
+
+                // Recalcular totais gerais
+                const totalAlunos = dadosFiltrados.por_turma.reduce((acc, t) => acc + t.total, 0);
+                const totalPresencas = dadosFiltrados.por_turma.reduce((acc, t) => acc + t.presencas, 0);
+                dadosFiltrados.geral = {
+                    total_alunos: totalAlunos,
+                    total_presencas: totalPresencas,
+                    total_ausencias: totalAlunos - totalPresencas
+                };
+            }
+
+            if (turmaFiltro !== 'all') {
+                dadosFiltrados.por_turma = dadosFiltrados.por_turma.filter(t => t.turma === turmaFiltro);
+
+                const totalAlunos = dadosFiltrados.por_turma.reduce((acc, t) => acc + t.total, 0);
+                const totalPresencas = dadosFiltrados.por_turma.reduce((acc, t) => acc + t.presencas, 0);
+                dadosFiltrados.geral = {
+                    total_alunos: totalAlunos,
+                    total_presencas: totalPresencas,
+                    total_ausencias: totalAlunos - totalPresencas
+                };
+            }
+
+            if (dataFiltro !== 'all') {
+                dadosFiltrados.por_data = dadosFiltrados.por_data.filter(d => d.data === dataFiltro);
+                dadosFiltrados.evolucao_temporal = dadosFiltrados.evolucao_temporal.filter(e => e.data === dataFiltro);
+            }
+
+            atualizarGraficos(dadosFiltrados);
+        }
+
+        // Event listeners para filtros
+        document.getElementById('filterNivel').addEventListener('change', aplicarFiltros);
+        document.getElementById('filterTurma').addEventListener('change', aplicarFiltros);
+        document.getElementById('filterData').addEventListener('change', aplicarFiltros);
+
+        // Inicializar dashboard
+        atualizarGraficos(dadosCompletos);
+    </script>
+</body>
+</html>
