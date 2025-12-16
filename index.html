@@ -576,7 +576,7 @@
         };
 
         // Carregar logo
-        fetch('/mnt/user-data/uploads/sesi-logo.png')
+        fetch('./sesi-logo.png')
             .then(response => response.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
