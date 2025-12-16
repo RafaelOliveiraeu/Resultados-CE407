@@ -576,11 +576,18 @@
         };
 
         // Carregar logo
-        fetch('sesi-logo.png')
-            .then(response => response.blob())
+        fetch('./sesi-logo.png')
+            .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.blob();
+            })
             .then(blob => {
-                const url = URL.createObjectURL(blob);
-                document.getElementById('logoImg').src = url;
+            const url = URL.createObjectURL(blob);
+            const img = document.getElementById('logoImg');
+            img.src = url;
+
+            // Libera a URL temporária após o carregamento da imagem
+            img.onload = () => URL.revokeObjectURL(url);
             })
             .catch(() => console.log('Logo não carregada'));
 
